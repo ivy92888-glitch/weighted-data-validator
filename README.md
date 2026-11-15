@@ -100,7 +100,28 @@ A 胜出。
 
 > 示例数据见 `examples/sample-data.xlsx`（虚构的园艺工具领域，完全中性）。
 
-### 4. 运行
+### 4. 参考库表（ReferenceCodes）是可选的 —— 怎么准备
+
+加权评分算法需要一张**历史记录表**来计算"同一个候选值出现多少次、最近一次出现在第几行"。
+
+**这张表不随代码发布**——它是你自己的业务数据，可能有几千到几万行历史记录。
+你可以直接从已有系统导出一张，也可以手动建一张。三个可选的表结构模板
+（从简单到丰富）见 `docs/Configuration.md → Reference Database Schema Templates`。
+
+**一张最小可用的参考库表**（3 列就够）：
+
+| A: Lookup Term | B: Candidate Value | C: Notes |
+|---|---|---|
+| Garden Cart | 7326909890 | historical usage 2024 |
+| Garden Cart | 7326909890 | historical usage 2024 (repeat) |
+| Paper Lantern | 4823908580 | historical usage 2025 |
+| … | … | 新记录永远放到底部（行号越大 = 越新） |
+
+> 💡 **行号顺序是核心机制。** 加权算法从下往上扫表，
+> 行号越大的记录被视为"越新"。所以你的参考库表**新记录永远追加到最后**，
+> 不要插到中间。
+
+### 5. 运行
 宏列表里找到 `RunFullPipeline`，点运行。
 
 ```
